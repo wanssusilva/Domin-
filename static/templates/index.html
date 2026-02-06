@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mesa de Dominó</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header> Jogador: <b>{{ user }}</b> </header>
+    <div id="mesa"></div>
+    <div id="minha-mao">
+        <div class="peca" onclick="jogar(6,6)">[6|6]</div>
+        <div class="peca" onclick="jogar(6,5)">[6|5]</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const user = "{{ user }}";
+        socket.emit('join', {user: user});
+
+        function jogar(a, b) {
+            socket.emit('jogada', {peca: [a, b], player: user});
+        }
+
+        socket.on('update_board', (data) => {
+            const mesa = document.getElementById('mesa');
+            mesa.innerHTML += `<div class="peca">${data.peca[0]}|${data.peca[1]}</div>`;
+        });
+    </script>
+</body>
+</html>
